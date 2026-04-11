@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oefenquiz 4 havo – Zuren, Basen & Bindingen</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --border: #30363d;
+    --accent: #58a6ff;
+    --accent2: #3fb950;
+    --accent3: #f78166;
+    --accent4: #d2a8ff;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --card: #1c2128;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Syne', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2rem 1rem 4rem;
+  }
+  header { max-width: 760px; margin: 0 auto 3rem; text-align: center; }
+  .tag {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 0.25rem 0.75rem;
+    border-radius: 2px;
+    margin-bottom: 1rem;
+  }
+  h1 { font-size: clamp(1.6rem,5vw,2.4rem); font-weight: 800; line-height: 1.15; margin-bottom: 0.5rem; }
+  header p { color: var(--muted); font-size: 0.95rem; font-family: 'Space Mono', monospace; }
+  .progress-bar { max-width: 760px; margin: 0 auto 2rem; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent4)); border-radius: 2px; transition: width 0.4s ease; width: 0%; }
+  .section-spacer { max-width: 760px; margin: 2.5rem auto 1.5rem; border-top: 1px solid var(--border); padding-top: 2rem; }
+  .section-label { display: flex; align-items: center; gap: 0.75rem; }
+  .section-label .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .section-label span { font-family: 'Space Mono', monospace; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .card { max-width: 760px; margin: 0 auto 1.25rem; background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; }
+  .question-num { font-family: 'Space Mono', monospace; font-size: 0.7rem; color: var(--muted); margin-bottom: 0.6rem; }
+  .question-text { font-size: 1rem; font-weight: 600; line-height: 1.5; margin-bottom: 1.2rem; }
+  .options { display: flex; flex-direction: column; gap: 0.5rem; }
+  .option {
+    display: flex; align-items: flex-start; gap: 0.75rem;
+    padding: 0.65rem 0.9rem;
+    border: 1px solid var(--border); border-radius: 6px;
+    cursor: pointer; transition: all 0.15s;
+    font-size: 0.95rem; background: transparent; color: var(--text);
+    text-align: left; width: 100%; font-family: 'Syne', sans-serif;
+  }
+  .option:hover:not([disabled]) { border-color: var(--accent); background: rgba(88,166,255,0.05); }
+  .option.selected { border-color: var(--accent); background: rgba(88,166,255,0.1); }
+  .option.correct  { border-color: var(--accent2) !important; background: rgba(63,185,80,0.1) !important; }
+  .option.wrong    { border-color: var(--accent3) !important; background: rgba(247,129,102,0.1) !important; }
+  .option[disabled] { cursor: default; }
+  .option-key {
+    font-family: 'Space Mono', monospace; font-size: 0.75rem;
+    width: 22px; height: 22px; min-width: 22px;
+    border: 1px solid currentColor; border-radius: 3px;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0.6; margin-top: 1px;
+  }
+  .option-content { flex: 1; }
+  .option-sub { font-family: 'Syne', sans-serif; font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+  .fill-in {
+    width: 100%; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 6px; padding: 0.65rem 0.9rem; color: var(--text);
+    font-family: 'Space Mono', monospace; font-size: 0.9rem; outline: none; transition: border-color 0.2s;
+  }
+  .fill-in:focus { border-color: var(--accent); }
+  .fill-in.correct { border-color: var(--accent2) !important; }
+  .fill-in.wrong   { border-color: var(--accent3) !important; }
+  .hint { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--muted); margin-top: 0.5rem; }
+  .feedback {
+    margin-top: 1rem; padding: 0.75rem 1rem;
+    background: rgba(247,129,102,0.08); border: 1px solid var(--accent3);
+    border-radius: 6px; font-size: 0.88rem; line-height: 1.5; color: var(--text);
+  }
+  .feedback-icon { color: var(--accent3); font-weight: 700; margin-right: 0.3rem; }
+  .submit-area { max-width: 760px; margin: 2rem auto 0; text-align: center; }
+  .btn-submit {
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1rem;
+    background: var(--accent); color: #0d1117; border: none; border-radius: 6px;
+    padding: 0.85rem 2.5rem; cursor: pointer; transition: opacity 0.2s, transform 0.15s;
+  }
+  .btn-submit:hover { opacity: 0.88; transform: translateY(-1px); }
+  #scoreBox { display: none; max-width: 760px; margin: 3rem auto; text-align: center; }
+  .score-ring { width: 140px; height: 140px; margin: 0 auto 1.5rem; position: relative; }
+  .score-ring svg { transform: rotate(-90deg); }
+  .score-text {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    font-family: 'Space Mono', monospace; font-size: 1.6rem; font-weight: 700; color: var(--text);
+  }
+  .score-label { font-size: 1.3rem; font-weight: 800; margin-bottom: 0.5rem; }
+  .score-sub { color: var(--muted); font-family: 'Space Mono', monospace; font-size: 0.85rem; margin-bottom: 2rem; }
+  .breakdown { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; }
+  @media (max-width: 480px) { .breakdown { grid-template-columns: 1fr; } }
+  .breakdown-item { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; text-align: left; }
+  .breakdown-item .topic { font-size: 0.8rem; font-family: 'Space Mono', monospace; margin-bottom: 0.4rem; }
+  .breakdown-item .score-frac { font-size: 1.3rem; font-weight: 800; }
+  .btn-retry {
+    font-family: 'Syne', sans-serif; font-weight: 700; background: transparent;
+    color: var(--accent); border: 1px solid var(--accent); border-radius: 6px;
+    padding: 0.7rem 2rem; cursor: pointer; font-size: 0.95rem; transition: all 0.2s;
+  }
+  .btn-retry:hover { background: rgba(88,166,255,0.1); }
+  .ph-schaal { background: #0d1117; border: 1px solid var(--border); border-radius: 6px; padding: 1rem; margin-bottom: 1rem; }
+  sub, sup { font-size: 0.75em; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="tag">4 havo · Scheikunde</div>
+  <h1>Zuren, Basen<br>&amp; Bindingen</h1>
+  <p>12 vragen · pH · naamgeving · molariteit · polaire binding</p>
+</header>
+
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<!-- SECTIE 1 -->
+<div class="section-spacer">
+  <div class="section-label"><div class="dot" style="background:#58a6ff"></div><span>Leerdoel 1 — pH van zure en basische oplossingen</span></div>
+</div>
+
+<div class="card" id="card-q1">
+  <div class="question-num">Vraag 1 van 12</div>
+  <div class="question-text">Een oplossing heeft een pH van 3. Wat geldt voor deze oplossing?</div>
+  <div class="options">
+    <button class="option" onclick="selectOption(this,'q1','A')"><span class="option-key">A</span><span class="option-content">De oplossing is basisch</span></button>
+    <button class="option" onclick="selectOption(this,'q1','B')"><span class="option-key">B</span><span class="option-content">De oplossing is neutraal</span></button>
+    <button class="option" onclick="selectOption(this,'q1','C')"><span class="option-key">C</span><span class="option-content">De oplossing is zuur</span></button>
+    <button class="option" onclick="selectOption(this,'q1','D')"><span class="option-key">D</span><span class="option-content">De pH kan niet kloppen</span></button>
+  </div>
+</div>
+
+<div class="card" id="card-q2">
+  <div class="question-num">Vraag 2 van 12</div>
+  <div class="question-text">Bekijk de pH-schaal hieronder. Welke twee stoffen zijn <strong>allebei basisch</strong> én hebben het <strong>kleinste pH-verschil</strong> ten opzichte van elkaar?</div>
+  <div class="ph-schaal">
+    <div style="display:flex;justify-content:space-between;color:var(--text);font-weight:700;margin-bottom:0.4rem;font-family:'Space Mono',monospace;font-size:0.8rem;">
+      <span>zeer zuur</span><span>neutraal</span><span>zeer basisch</span>
+    </div>
+    <div style="height:16px;border-radius:4px;background:linear-gradient(to right,#e8002d,#c0006e,#7b2d8b,#3b5fc0,#0099cc);margin-bottom:0.5rem;"></div>
+    <div style="display:flex;justify-content:space-between;margin-bottom:0.8rem;color:var(--muted);font-family:'Space Mono',monospace;font-size:0.72rem;">
+      <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.2rem 1rem;font-size:0.78rem;color:var(--muted);font-family:'Space Mono',monospace;">
+      <span>pH 0 → accuzuur</span><span>pH 7 → water</span>
+      <span>pH 2 → maagsap</span><span>pH 9 → zeep</span>
+      <span>pH 3 → citroen / azijn</span><span>pH 11 → sodawater / ammonia</span>
+      <span>pH 5 → zure regen</span><span>pH 14 → gootsteen­ontstopper</span>
+    </div>
+  </div>
+  <div class="options">
+    <button class="option" onclick="selectOption(this,'q2','A')"><span class="option-key">A</span><span class="option-content">Accuzuur en maagsap</span></button>
+    <button class="option" onclick="selectOption(this,'q2','B')"><span class="option-key">B</span><span class="option-content">Citroen en zure regen</span></button>
+    <button class="option" onclick="selectOption(this,'q2','C')"><span class="option-key">C</span><span class="option-content">Zeep en sodawater/ammonia</span></button>
+    <button class="option" onclick="selectOption(this,'q2','D')"><span class="option-key">D</span><span class="option-content">Water en zure regen</span></button>
+  </div>
+</div>
+
+<div class="card" id="card-q3">
+  <div class="question-num">Vraag 3 van 12</div>
+  <div class="question-text">Een schoonmaakmiddel heeft pH = 13. Wat kun je zeggen over de concentratie OH⁻-ionen in vergelijking met puur water (pH = 7)?</div>
+  <div class="options">
+    <button class="option" onclick="selectOption(this,'q3','A')"><span class="option-key">A</span><span class="option-content">Er zijn minder OH⁻-ionen dan in puur water</span></button>
+    <button class="option" onclick="selectOption(this,'q3','B')"><span class="option-key">B</span><span class="option-content">Er zijn evenveel OH⁻-ionen als in puur water</span></button>
+    <button class="option" onclick="selectOption(this,'q3','C')"><span class="option-key">C</span><span class="option-content">Er zijn meer OH⁻-ionen dan in puur water</span></button>
+    <button class="option" onclick="selectOption(this,'q3','D')"><span class="option-key">D</span><span class="option-content">Dat kun je niet zeggen zonder de stof te kennen</span></button>
+  </div>
+</div>
+
+<!-- SECTIE 2 -->
+<div class="section-spacer">
+  <div class="section-label"><div class="dot" style="background:#d2a8ff"></div><span>Leerdoel 2 — Naamgeving alkaanamines &amp; alkaanzuren</span></div>
+</div>
+
+<div class="card" id="card-q4">
+  <div class="question-num">Vraag 4 van 12</div>
+  <div class="question-text">Wat is de systematische naam van CH<sub>3</sub>–CH<sub>2</sub>–NH<sub>2</sub>?</div>
+  <div class="options">
+    <button class="option" onclick="selectOption(this,'q4','A')"><span class="option-key">A</span><span class="option-content">Methaanamine</span></button>
+    <button class="option" onclick="selectOption(this,'q4','B')"><span class="option-key">B</span><span class="option-content">Ethaanamine</span></button>
+    <button class="option" onclick="selectOption(this,'q4','C')"><span class="option-key">C</span><span class="option-content">Propaanamine</span></button>
+    <button class="option" onclick="selectOption(this,'q4','D')"><span class="option-key">D</span><span class="option-content">Butaanamine</span></button>
+  </div>
+</div>
+
+<div class="card" id="card-q5">
+  <div class="question-num">Vraag 5 van 12</div>
+  <div class="question-text">Geef de systematische naam van het alkaanzuur met de structuurformule:<br>CH<sub>3</sub>–CH<sub>2</sub>–CH<sub>2</sub>–COOH</div>
+  <input class="fill-in" id="q5" type="text" placeholder="Typ de systematische naam">
+  <div class="hint">Hoeveel koolstofatomen telt de langste keten (inclusief COOH)?</div>
+</div>
+
+<div class="card" id="card-q6">
+  <div class="question-num">Vraag 6 van 12</div>
+  <div class="question-text">Welke stof heeft de naam propaan-1-amine?</div>
+  <div class="options">
+    <button class="option" onclick="selectOption(this,'q6','A')" style="font-family:'Space Mono',monospace;font-size:0.85rem;">
+      <span class="option-key">A</span>
+      <span class="option-content">CH<sub>3</sub>–NH<sub>2</sub><div class="option-sub">1 koolstofatoom</div></span>
+    </button>
+    <button class="option" onclick="selectOption(this,'q6','B')" style="font-family:'Space Mono',monospace;font-size:0.85rem;">
+      <span class="option-key">B</span>
+      <span class="option-content">CH<sub>3</sub>–CH<sub>2</sub>–NH<sub>2</sub><div class="option-sub">2 koolstofatomen</div></span>
+    </button>
+    <button class="option" onclick="selectOption(this,'q6','C')" style="font-family:'Space Mono',monospace;font-size:0.85rem;">
+      <span class="option-key">C</span>
+      <span class="option-content">CH<sub>3</sub>–CH<sub>2</sub>–CH<sub>2</sub>–NH<sub>2</sub><div class="option-sub">3 koolstofatomen</div></span>
+    </button>
+    <button class="option" onclick="selectOption(this,'q6','D')" style="font-family:'Space Mono',monospace;font-size:0.85rem;">
+      <span class="option-key">D</span>
+      <span class="option-content">CH<sub>3</sub>–CH<sub>2</sub>–CH<sub>2</sub>–CH<sub>2</sub>–NH<sub>2</sub><div class="option-sub">4 koolstofatomen</div></span>
+    </button>
+  </div>
+</div>
+
+<!-- SECTIE 3 -->
+<div class="section-spacer">
+  <div class="section-label"><div class="dot" style="background:#3fb950"></div><span>Leerdoel 3 — Rekenen met molariteit</span></div>
+</div>
+
+<div class="card" id="card-q7">
+  <div class="question-num">Vraag 7 van 12</div>
+  <div class="question-text">Je lost 9,0 g glucose (C<sub>6</sub>H<sub>12</sub>O<sub>6</sub>, M = 180 g/mol) op en vult aan tot 500 mL oplossing. Wat is de molaire concentratie?</div>
+  <div class="options">
+    <button class="option" onclick="selectOption(this,'q7','A')"><span class="option-key">A</span><span class="option-content">0,050 mol/L</span></button>
+    <button class="option" onclick="selectOption(this,'q7','B')"><span class="option-key">B</span><span class="option-content">0,10 mol/L</span></button>
+    <button class="option" onclick="selectOption(this,'q7','C')"><span class="option-key">C</span><span class="option-content">0,18 mol/L</span></button>
+    <button class="option" onclick="selectOption(this,'q7','D')"><span class="option-key">D</span><span class="option-content">0,20 mol/L</span></button>
+  </div>
+</div>
+
+<div class="card" id="card-q8">
+  <div class="question-num">Vraag 8 van 12</div>
+  <div class="question-text">Je hebt een oplossing van azijnzuur (CH<sub>3</sub>COOH) met c = 0,40 mol/L. Hoeveel mL heb je nodig om 0,020 mol azijnzuur te hebben?</div>
+  <input class="fill-in" id="q8" type="text" placeholder="Antwoord in mL (bijv. 50)">
+  <div class="hint">Gebruik: V = n / c &nbsp;|&nbsp; Let op de eenheid!</div>
+</div>
+
+<div class="card" id="card-q9">
+  <div class="question-num">Vraag 9 van 12</div>
+  <div class="question-text">NaCl dissocieert volledig: NaCl → Na⁺ + Cl⁻<br>Wat is de concentratie van Cl⁻-ionen in een 0,4 mol/L NaCl-oplossing?</div>
+  <div class="options">
+    <button class="option" onclick="selectOption(this,'q9','A')"><span class="option-key">A</span><span class="option-content">0,2 mol/L</span></button>
+    <button class="option" onclick="selectOption(this,'q9','B')"><span class="option-key">B</span><span class="option-content">0,4 mol/L</span></button>
+    <button class="option" onclick="selectOption(this,'q9','C')"><span class="option-key">C</span><span class="option-content">0,8 mol/L</span></button>
+    <button class="option" onclick="selectOption(this,'q9','D')"><span class="option-key">D</span><span class="option-content">1,6 mol/L</span></button>
+  </div>
+</div>
+
+<!-- SECTIE 4 -->
+<div class="section-spacer">
+  <div class="section-label"><div class="dot" style="background:#f78166"></div><span>Leerdoel 4 — Polaire atoombinding</span></div>
+</div>
+
+<div class="card" id="card-q10">
+  <div class="question-num">Vraag 10 van 12</div>
+  <div class="question-text">Wat is een polaire atoombinding?</div>
+  <div class="options">
+    <button class="option" onclick="selectOption(this,'q10','A')"><span class="option-key">A</span><span class="option-content">Een binding waarbij elektronen gelijk verdeeld zijn tussen twee atomen van hetzelfde element</span></button>
+    <button class="option" onclick="selectOption(this,'q10','B')"><span class="option-key">B</span><span class="option-content">Een binding waarbij bindingselektronen ongelijk verdeeld zijn doordat de twee atomen verschillend elektronegatief zijn</span></button>
+    <button class="option" onclick="selectOption(this,'q10','C')"><span class="option-key">C</span><span class="option-content">Een binding waarbij een atoom elektronen volledig afgeeft aan een ander atoom</span></button>
+    <button class="option" onclick="selectOption(this,'q10','D')"><span class="option-key">D</span><span class="option-content">Een binding die alleen voorkomt in ionverbindingen</span></button>
+  </div>
+</div>
+
+<div class="card" id="card-q11">
+  <div class="question-num">Vraag 11 van 12</div>
+  <div class="question-text">In een H–Cl-binding trekt het chlooratoom de bindingselektronen sterker aan dan waterstof. Welk symbool gebruik je om aan te geven dat het chlooratoom een gedeeltelijke negatieve lading heeft?</div>
+  <input class="fill-in" id="q11" type="text" placeholder="Typ het symbool">
+  <div class="hint">Gebruik δ+ of δ− (je mag ook delta+ of delta- typen)</div>
+</div>
+
+<div class="card" id="card-q12">
+  <div class="question-num">Vraag 12 van 12</div>
+  <div class="question-text">In een H–F-binding trekt fluor de bindingselektronen veel sterker aan dan waterstof. Wat is hiervan het gevolg?</div>
+  <div class="options">
+    <button class="option" onclick="selectOption(this,'q12','A')"><span class="option-key">A</span><span class="option-content">De binding is apolair, want beide atomen delen de elektronen gelijk</span></button>
+    <button class="option" onclick="selectOption(this,'q12','B')"><span class="option-key">B</span><span class="option-content">Het fluooratoom krijgt een gedeeltelijke positieve lading (δ+)</span></button>
+    <button class="option" onclick="selectOption(this,'q12','C')"><span class="option-key">C</span><span class="option-content">De binding is polair: fluor krijgt δ− en waterstof krijgt δ+</span></button>
+    <button class="option" onclick="selectOption(this,'q12','D')"><span class="option-key">D</span><span class="option-content">Er worden elektronen volledig overgedragen, dus het is een ionbinding</span></button>
+  </div>
+</div>
+
+<div class="submit-area" id="submitArea">
+  <button class="btn-submit" onclick="submitQuiz()">Bekijk score →</button>
+</div>
+
+<div id="scoreBox">
+  <div class="score-ring">
+    <svg width="140" height="140" viewBox="0 0 140 140">
+      <circle cx="70" cy="70" r="58" fill="none" stroke="#30363d" stroke-width="10"/>
+      <circle cx="70" cy="70" r="58" fill="none" stroke="#58a6ff" stroke-width="10"
+        stroke-dasharray="364.4" stroke-dashoffset="364.4"
+        id="ringCircle" stroke-linecap="round"/>
+    </svg>
+    <div class="score-text" id="scoreFrac">0/12</div>
+  </div>
+  <div class="score-label" id="scoreLabel">—</div>
+  <div class="score-sub" id="scoreSub">—</div>
+  <div class="breakdown" id="breakdown"></div>
+  <button class="btn-retry" onclick="retryQuiz()">↺ Opnieuw proberen</button>
+</div>
+
+<script>
+const answers = {
+  q1:  { type:'mc',   correct:'C', label:'pH 3 is kleiner dan 7, dus de oplossing is zuur.' },
+  q2:  { type:'mc',   correct:'C', label:'Zeep (pH 9) en sodawater/ammonia (pH 11) zijn allebei basisch en liggen 2 pH-eenheden uit elkaar.' },
+  q3:  { type:'mc',   correct:'C', label:'Een hogere pH betekent meer OH⁻-ionen. pH 13 > pH 7, dus er zijn meer OH⁻-ionen.' },
+  q4:  { type:'mc',   correct:'B', label:'CH₃–CH₂–NH₂ heeft 2 koolstofatomen → ethaan + amine → ethaanamine.' },
+  q5:  { type:'fill', correct:['butaanzuur','Butaanzuur'], label:'De keten heeft 4 C-atomen (inclusief COOH) → butaanzuur.' },
+  q6:  { type:'mc',   correct:'C', label:'Propaan = 3 C-atomen, NH₂ op positie 1 → CH₃–CH₂–CH₂–NH₂.' },
+  q7:  { type:'mc',   correct:'B', label:'n = 9,0 ÷ 180 = 0,050 mol; c = 0,050 ÷ 0,500 = 0,10 mol/L.' },
+  q8:  { type:'fill', correct:['50','50 ml','50 mL','0,050 l','0.050 l','0,050 L','0.050 L'], label:'V = n ÷ c = 0,020 ÷ 0,40 = 0,050 L = 50 mL.' },
+  q9:  { type:'mc',   correct:'B', label:'NaCl → Na⁺ + Cl⁻: per mol NaCl ontstaat 1 mol Cl⁻, dus c(Cl⁻) = 0,4 mol/L.' },
+  q10: { type:'mc',   correct:'B', label:'Bij een polaire binding trekken de atomen de elektronen ongelijk aan door verschil in elektronegativiteit.' },
+  q11: { type:'fill', correct:['δ−','δ-','delta-','δ–','𝛿-'], label:'Chloor trekt elektronen sterker aan → gedeeltelijk negatief → symbool δ−.' },
+  q12: { type:'mc',   correct:'C', label:'Fluor trekt de elektronen sterker aan dan waterstof → F krijgt δ−, H krijgt δ+. Dat is een polaire binding.' }
+};
+
+const sections = [
+  { label:'pH',              qs:['q1','q2','q3'],    color:'#58a6ff' },
+  { label:'Naamgeving',      qs:['q4','q5','q6'],    color:'#d2a8ff' },
+  { label:'Molariteit',      qs:['q7','q8','q9'],    color:'#3fb950' },
+  { label:'Polaire binding', qs:['q10','q11','q12'], color:'#f78166' }
+];
+
+const selected = {};
+
+function selectOption(btn, qid, val) {
+  const card = btn.closest('.card');
+  card.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+  btn.classList.add('selected');
+  selected[qid] = val;
+  updateProgress();
+}
+
+function updateProgress() {
+  const total = Object.keys(answers).length;
+  const done = Object.keys(answers).filter(q => {
+    if (answers[q].type === 'mc') return selected[q] !== undefined;
+    const el = document.getElementById(q);
+    return el && el.value.trim() !== '';
+  }).length;
+  document.getElementById('progressFill').style.width = (done / total * 100) + '%';
+}
+
+document.querySelectorAll('.fill-in').forEach(el => {
+  el.addEventListener('input', updateProgress);
+});
+
+function submitQuiz() {
+  let total = 0;
+  const sectionScores = sections.map(s => ({ label:s.label, color:s.color, score:0 }));
+
+  Object.keys(answers).forEach(qid => {
+    const a = answers[qid];
+    const card = document.getElementById('card-' + qid);
+    let correct = false;
+
+    if (a.type === 'mc') {
+      correct = selected[qid] === a.correct;
+      card.querySelectorAll('.option').forEach(btn => {
+        const m = btn.getAttribute('onclick').match(/'([A-D])'\s*\)$/);
+        if (!m) return;
+        if (m[1] === a.correct) btn.classList.add('correct');
+        else if (m[1] === selected[qid] && !correct) btn.classList.add('wrong');
+        btn.setAttribute('disabled', true);
+      });
+    } else {
+      const el = document.getElementById(qid);
+      const val = (el ? el.value : '').trim().toLowerCase();
+      correct = a.correct.map(c => c.toLowerCase()).includes(val);
+      if (el) { el.classList.add(correct ? 'correct' : 'wrong'); el.setAttribute('disabled', true); }
+    }
+
+    if (!correct && card && !card.querySelector('.feedback')) {
+      const fb = document.createElement('div');
+      fb.className = 'feedback';
+      fb.innerHTML = '<span class="feedback-icon">✗</span> <strong>Goed antwoord:</strong> ' + a.label;
+      card.appendChild(fb);
+    }
+
+    if (correct) {
+      total++;
+      sections.forEach((s, i) => { if (s.qs.includes(qid)) sectionScores[i].score++; });
+    }
+  });
+
+  document.getElementById('submitArea').style.display = 'none';
+  const box = document.getElementById('scoreBox');
+  box.style.display = 'block';
+  document.getElementById('scoreFrac').textContent = total + '/12';
+
+  const pct = total / 12;
+  setTimeout(() => {
+    const ring = document.getElementById('ringCircle');
+    ring.style.transition = 'stroke-dashoffset 1s ease';
+    ring.style.strokeDashoffset = 364.4 - pct * 364.4;
+    ring.style.stroke = pct >= 0.8 ? '#3fb950' : pct >= 0.5 ? '#58a6ff' : '#f78166';
+  }, 100);
+
+  document.getElementById('scoreLabel').textContent =
+    pct === 1 ? '🎉 Perfect!' : pct >= 0.75 ? 'Goed gedaan!' : pct >= 0.5 ? 'Aardig op weg' : 'Nog even oefenen';
+  document.getElementById('scoreSub').textContent =
+    'Je had ' + total + ' van de 12 vragen goed (' + Math.round(pct * 100) + '%)';
+  document.getElementById('breakdown').innerHTML = sectionScores.map(s =>
+    '<div class="breakdown-item"><div class="topic" style="color:' + s.color + '">' + s.label + '</div>' +
+    '<div class="score-frac" style="color:' + s.color + '">' + s.score + '/3</div></div>'
+  ).join('');
+
+  box.scrollIntoView({ behavior: 'smooth' });
+}
+
+function retryQuiz() {
+  Object.keys(selected).forEach(k => delete selected[k]);
+  document.querySelectorAll('.option').forEach(o => {
+    o.classList.remove('selected','correct','wrong');
+    o.removeAttribute('disabled');
+  });
+  document.querySelectorAll('.fill-in').forEach(el => {
+    el.value = '';
+    el.className = 'fill-in';
+    el.removeAttribute('disabled');
+  });
+  document.querySelectorAll('.feedback').forEach(el => el.remove());
+  document.getElementById('progressFill').style.width = '0%';
+  document.getElementById('submitArea').style.display = 'block';
+  document.getElementById('scoreBox').style.display = 'none';
+  const ring = document.getElementById('ringCircle');
+  ring.style.transition = 'none';
+  ring.style.strokeDashoffset = '364.4';
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+</script>
+</body>
+</html>
