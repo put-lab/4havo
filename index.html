@@ -1,174 +1,36 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>4 havo – Scheikunde</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #0d1117;
-    --border: #30363d;
-    --accent: #58a6ff;
-    --accent2: #3fb950;
-    --accent3: #f78166;
-    --accent4: #d2a8ff;
-    --text: #e6edf3;
-    --muted: #8b949e;
-    --card: #1c2128;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'Syne', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    padding: 2rem 1rem 4rem;
-  }
-  header {
-    max-width: 760px;
-    margin: 0 auto 3rem;
-    text-align: center;
-  }
-  .tag {
-    display: inline-block;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.7rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--accent);
-    border: 1px solid var(--accent);
-    padding: 0.25rem 0.75rem;
-    border-radius: 2px;
-    margin-bottom: 1rem;
-  }
-  h1 {
-    font-size: clamp(1.8rem, 5vw, 2.6rem);
-    font-weight: 800;
-    line-height: 1.15;
-    margin-bottom: 0.5rem;
-  }
-  header p {
-    color: var(--muted);
-    font-size: 0.9rem;
-    font-family: 'Space Mono', monospace;
-  }
-  .section-label {
-    max-width: 760px;
-    margin: 2.5rem auto 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-  .section-label .dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-  .section-label span {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.72rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-  .divider {
-    max-width: 760px;
-    margin: 0 auto;
-    border: none;
-    border-top: 1px solid var(--border);
-  }
-  .quiz-card {
-    max-width: 760px;
-    margin: 0 auto 1rem;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 1.25rem 1.5rem;
-    text-decoration: none;
-    color: var(--text);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    transition: border-color 0.2s, background 0.2s;
-  }
-  .quiz-card:hover { border-color: var(--accent); background: rgba(88,166,255,0.04); }
-  .quiz-card-left { flex: 1; }
-  .quiz-card-title {
-    font-size: 1rem;
-    font-weight: 700;
-    margin-bottom: 0.3rem;
-  }
-  .quiz-card-meta {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.73rem;
-    color: var(--muted);
-  }
-  .quiz-card-arrow {
-    font-size: 1.2rem;
-    color: var(--accent);
-    opacity: 0.6;
-    transition: opacity 0.2s, transform 0.2s;
-  }
-  .quiz-card:hover .quiz-card-arrow { opacity: 1; transform: translateX(4px); }
-  .pills {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    margin-top: 0.5rem;
-  }
-  .pill {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.05em;
-    padding: 0.15rem 0.5rem;
-    border-radius: 2px;
-    border: 1px solid;
-    opacity: 0.8;
-  }
-  footer {
-    max-width: 760px;
-    margin: 4rem auto 0;
-    text-align: center;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.72rem;
-    color: var(--muted);
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>4 havo scheikunde</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 2rem auto; padding: 0 1rem; }
+    h1 { font-size: 22px; font-weight: 500; margin: 0 0 0.5rem; }
+    p { font-size: 14px; color: #666; margin: 0 0 1.5rem; }
+    .section { font-size: 12px; color: #999; text-transform: uppercase; margin: 1.5rem 0 0.5rem; }
+    a.card { display: flex; justify-content: space-between; align-items: center;
+             border: 1px solid #ddd; border-radius: 10px; padding: 1rem 1.25rem;
+             margin-bottom: 12px; text-decoration: none; color: inherit; }
+    a.card:hover { background: #f9f9f9; }
+    .card-title { font-size: 15px; font-weight: 500; }
+    .card-sub { font-size: 13px; color: #666; margin-top: 4px; }
+    .badge { font-size: 12px; padding: 3px 10px; border-radius: 6px;
+             background: #e8f0fe; color: #1a56db; }
+  </style>
 </head>
 <body>
+  <h1>4 havo scheikunde</h1>
+  <p>Overzicht van alle oefenmaterialen</p>
 
-<header>
-  <div class="tag">Segbroek College · 4 havo</div>
-  <h1>Scheikunde<br>Oefenmateriaal</h1>
-  <p>Klik op een quiz om te oefenen</p>
-</header>
-
-<hr class="divider">
-
-<div class="section-label">
-  <div class="dot" style="background:#d2a8ff"></div>
-  <span>Hoofdstuk 7 — Zuren, basen &amp; organische verbindingen</span>
-</div>
-
-<a class="quiz-card" href="4havo-quiz-h7.html">
-  <div class="quiz-card-left">
-    <div class="quiz-card-title">Oefenquiz H7</div>
-    <div class="quiz-card-meta">12 vragen · meerkeuze &amp; invulvragen</div>
-    <div class="pills">
-      <span class="pill" style="color:#58a6ff;border-color:#58a6ff">pH</span>
-      <span class="pill" style="color:#d2a8ff;border-color:#d2a8ff">Naamgeving</span>
-      <span class="pill" style="color:#3fb950;border-color:#3fb950">Molariteit</span>
-      <span class="pill" style="color:#f78166;border-color:#f78166">Polaire binding</span>
+  <div class="section">Hoofdstuk 7 — Voorkennis</div>
+  <a class="card" href="4havo-quiz-h7.html">
+    <div>
+      <div class="card-title">Quiz voorkennis H7</div>
+      <div class="card-sub">Voorkennis hoofdstuk 7 oefenen</div>
     </div>
-  </div>
-  <div class="quiz-card-arrow">→</div>
-</a>
-
-<footer>
-  put-lab.github.io/4havo
-</footer>
+    <span class="badge">Quiz</span>
+  </a>
 
 </body>
 </html>
