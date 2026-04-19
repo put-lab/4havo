@@ -7,16 +7,16 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0d1117;
-    --surface: #161b22;
-    --border: #30363d;
-    --accent: #58a6ff;
-    --accent2: #3fb950;
-    --accent3: #f78166;
-    --accent4: #d2a8ff;
-    --text: #e6edf3;
-    --muted: #8b949e;
-    --card: #1c2128;
+    --bg: #f5f7fa;
+    --surface: #ffffff;
+    --border: #e1e4e8;
+    --accent: #1a73e8;
+    --accent2: #1e8e3e;
+    --accent3: #d93025;
+    --accent4: #7c4dff;
+    --text: #202124;
+    --muted: #5f6368;
+    --card: #ffffff;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -41,6 +41,20 @@
   }
   h1 { font-size: clamp(1.6rem,5vw,2.4rem); font-weight: 800; line-height: 1.15; margin-bottom: 0.5rem; }
   header p { color: var(--muted); font-size: 0.95rem; font-family: 'Space Mono', monospace; }
+
+  .name-card {
+    max-width: 760px; margin: 0 auto 2rem;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 8px; padding: 1.5rem;
+  }
+  .name-label { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.75rem; }
+  .name-input {
+    width: 100%; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 6px; padding: 0.65rem 0.9rem; color: var(--text);
+    font-family: 'Syne', sans-serif; font-size: 1rem; outline: none; transition: border-color 0.2s;
+  }
+  .name-input:focus { border-color: var(--accent); }
+
   .progress-bar { max-width: 760px; margin: 0 auto 2rem; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
   .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent4)); border-radius: 2px; transition: width 0.4s ease; width: 0%; }
   .section-spacer { max-width: 760px; margin: 2.5rem auto 1.5rem; border-top: 1px solid var(--border); padding-top: 2rem; }
@@ -59,10 +73,10 @@
     font-size: 0.95rem; background: transparent; color: var(--text);
     text-align: left; width: 100%; font-family: 'Syne', sans-serif;
   }
-  .option:hover:not([disabled]) { border-color: var(--accent); background: rgba(88,166,255,0.05); }
-  .option.selected { border-color: var(--accent); background: rgba(88,166,255,0.1); }
-  .option.correct  { border-color: var(--accent2) !important; background: rgba(63,185,80,0.1) !important; }
-  .option.wrong    { border-color: var(--accent3) !important; background: rgba(247,129,102,0.1) !important; }
+  .option:hover:not([disabled]) { border-color: var(--accent); background: rgba(26,115,232,0.05); }
+  .option.selected { border-color: var(--accent); background: rgba(26,115,232,0.08); }
+  .option.correct  { border-color: var(--accent2) !important; background: rgba(30,142,62,0.08) !important; }
+  .option.wrong    { border-color: var(--accent3) !important; background: rgba(217,48,37,0.08) !important; }
   .option[disabled] { cursor: default; }
   .option-key {
     font-family: 'Space Mono', monospace; font-size: 0.75rem;
@@ -84,14 +98,14 @@
   .hint { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--muted); margin-top: 0.5rem; }
   .feedback {
     margin-top: 1rem; padding: 0.75rem 1rem;
-    background: rgba(247,129,102,0.08); border: 1px solid var(--accent3);
+    background: rgba(217,48,37,0.06); border: 1px solid var(--accent3);
     border-radius: 6px; font-size: 0.88rem; line-height: 1.5; color: var(--text);
   }
   .feedback-icon { color: var(--accent3); font-weight: 700; margin-right: 0.3rem; }
   .submit-area { max-width: 760px; margin: 2rem auto 0; text-align: center; }
   .btn-submit {
     font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1rem;
-    background: var(--accent); color: #0d1117; border: none; border-radius: 6px;
+    background: var(--accent); color: #ffffff; border: none; border-radius: 6px;
     padding: 0.85rem 2.5rem; cursor: pointer; transition: opacity 0.2s, transform 0.15s;
   }
   .btn-submit:hover { opacity: 0.88; transform: translateY(-1px); }
@@ -102,11 +116,13 @@
     position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
     font-family: 'Space Mono', monospace; font-size: 1.6rem; font-weight: 700; color: var(--text);
   }
+  .score-naam { font-size: 1.1rem; color: var(--muted); font-family: 'Space Mono', monospace; margin-bottom: 0.5rem; }
   .score-label { font-size: 1.3rem; font-weight: 800; margin-bottom: 0.5rem; }
   .score-sub { color: var(--muted); font-family: 'Space Mono', monospace; font-size: 0.85rem; margin-bottom: 2rem; }
+  .save-status { font-family: 'Space Mono', monospace; font-size: 0.78rem; color: var(--muted); margin-bottom: 1.5rem; }
   .breakdown { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; }
   @media (max-width: 480px) { .breakdown { grid-template-columns: 1fr; } }
-  .breakdown-item { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; text-align: left; }
+  .breakdown-item { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; text-align: left; }
   .breakdown-item .topic { font-size: 0.8rem; font-family: 'Space Mono', monospace; margin-bottom: 0.4rem; }
   .breakdown-item .score-frac { font-size: 1.3rem; font-weight: 800; }
   .btn-retry {
@@ -114,8 +130,8 @@
     color: var(--accent); border: 1px solid var(--accent); border-radius: 6px;
     padding: 0.7rem 2rem; cursor: pointer; font-size: 0.95rem; transition: all 0.2s;
   }
-  .btn-retry:hover { background: rgba(88,166,255,0.1); }
-  .ph-schaal { background: #0d1117; border: 1px solid var(--border); border-radius: 6px; padding: 1rem; margin-bottom: 1rem; }
+  .btn-retry:hover { background: rgba(26,115,232,0.08); }
+  .ph-schaal { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 1rem; margin-bottom: 1rem; }
   sub, sup { font-size: 0.75em; }
 </style>
 </head>
@@ -127,11 +143,16 @@
   <p>12 vragen · pH · naamgeving · molariteit · polaire binding</p>
 </header>
 
+<div class="name-card">
+  <div class="name-label">Vul eerst je naam in</div>
+  <input class="name-input" id="leerlingNaam" type="text" placeholder="Voornaam achternaam">
+</div>
+
 <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
 
 <!-- SECTIE 1 -->
 <div class="section-spacer">
-  <div class="section-label"><div class="dot" style="background:#58a6ff"></div><span>Leerdoel 1 — pH van zure en basische oplossingen</span></div>
+  <div class="section-label"><div class="dot" style="background:#1a73e8"></div><span>Leerdoel 1 — pH van zure en basische oplossingen</span></div>
 </div>
 
 <div class="card" id="card-q1">
@@ -184,7 +205,7 @@
 
 <!-- SECTIE 2 -->
 <div class="section-spacer">
-  <div class="section-label"><div class="dot" style="background:#d2a8ff"></div><span>Leerdoel 2 — Naamgeving alkaanamines &amp; alkaanzuren</span></div>
+  <div class="section-label"><div class="dot" style="background:#7c4dff"></div><span>Leerdoel 2 — Naamgeving alkaanamines &amp; alkaanzuren</span></div>
 </div>
 
 <div class="card" id="card-q4">
@@ -230,7 +251,7 @@
 
 <!-- SECTIE 3 -->
 <div class="section-spacer">
-  <div class="section-label"><div class="dot" style="background:#3fb950"></div><span>Leerdoel 3 — Rekenen met molariteit</span></div>
+  <div class="section-label"><div class="dot" style="background:#1e8e3e"></div><span>Leerdoel 3 — Rekenen met molariteit</span></div>
 </div>
 
 <div class="card" id="card-q7">
@@ -264,7 +285,7 @@
 
 <!-- SECTIE 4 -->
 <div class="section-spacer">
-  <div class="section-label"><div class="dot" style="background:#f78166"></div><span>Leerdoel 4 — Polaire atoombinding</span></div>
+  <div class="section-label"><div class="dot" style="background:#d93025"></div><span>Leerdoel 4 — Polaire atoombinding</span></div>
 </div>
 
 <div class="card" id="card-q10">
@@ -303,20 +324,26 @@
 <div id="scoreBox">
   <div class="score-ring">
     <svg width="140" height="140" viewBox="0 0 140 140">
-      <circle cx="70" cy="70" r="58" fill="none" stroke="#30363d" stroke-width="10"/>
-      <circle cx="70" cy="70" r="58" fill="none" stroke="#58a6ff" stroke-width="10"
+      <circle cx="70" cy="70" r="58" fill="none" stroke="#e1e4e8" stroke-width="10"/>
+      <circle cx="70" cy="70" r="58" fill="none" stroke="#1a73e8" stroke-width="10"
         stroke-dasharray="364.4" stroke-dashoffset="364.4"
         id="ringCircle" stroke-linecap="round"/>
     </svg>
     <div class="score-text" id="scoreFrac">0/12</div>
   </div>
+  <div class="score-naam" id="scoreNaam"></div>
   <div class="score-label" id="scoreLabel">—</div>
   <div class="score-sub" id="scoreSub">—</div>
+  <div class="save-status" id="saveStatus"></div>
   <div class="breakdown" id="breakdown"></div>
   <button class="btn-retry" onclick="retryQuiz()">↺ Opnieuw proberen</button>
 </div>
 
 <script>
+const JSONBIN_ID  = '69e4d3e136566621a8cca35e';
+const JSONBIN_KEY = '$2a$10$MyGVM0ANs86vLveZMzFVX.WbFi8bK7nUBz5RNV20fv707j4LkmEZO';
+const JSONBIN_URL = 'https://api.jsonbin.io/v3/b/' + JSONBIN_ID;
+
 const answers = {
   q1:  { type:'mc',   correct:'C', label:'pH 3 is kleiner dan 7, dus de oplossing is zuur.' },
   q2:  { type:'mc',   correct:'C', label:'Zeep (pH 9) en sodawater/ammonia (pH 11) zijn allebei basisch en liggen 2 pH-eenheden uit elkaar.' },
@@ -333,10 +360,10 @@ const answers = {
 };
 
 const sections = [
-  { label:'pH',              qs:['q1','q2','q3'],    color:'#58a6ff' },
-  { label:'Naamgeving',      qs:['q4','q5','q6'],    color:'#d2a8ff' },
-  { label:'Molariteit',      qs:['q7','q8','q9'],    color:'#3fb950' },
-  { label:'Polaire binding', qs:['q10','q11','q12'], color:'#f78166' }
+  { label:'pH',              qs:['q1','q2','q3'],    color:'#1a73e8' },
+  { label:'Naamgeving',      qs:['q4','q5','q6'],    color:'#7c4dff' },
+  { label:'Molariteit',      qs:['q7','q8','q9'],    color:'#1e8e3e' },
+  { label:'Polaire binding', qs:['q10','q11','q12'], color:'#d93025' }
 ];
 
 const selected = {};
@@ -363,7 +390,41 @@ document.querySelectorAll('.fill-in').forEach(el => {
   el.addEventListener('input', updateProgress);
 });
 
+async function slaOpInJsonBin(naam, score, totaal, percentage) {
+  try {
+    const getRes = await fetch(JSONBIN_URL + '/latest', {
+      headers: { 'X-Master-Key': JSONBIN_KEY }
+    });
+    const getData = await getRes.json();
+    const huidig = getData.record || {};
+    const resultaten = huidig.resultaten || [];
+
+    resultaten.push({
+      naam: naam,
+      score: score,
+      totaal: totaal,
+      percentage: percentage,
+      quiz: 'voorkennis-h7',
+      datum: new Date().toISOString()
+    });
+
+    await fetch(JSONBIN_URL, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': JSONBIN_KEY
+      },
+      body: JSON.stringify({ resultaten: resultaten })
+    });
+
+    document.getElementById('saveStatus').textContent = '✓ Resultaat opgeslagen';
+  } catch (e) {
+    document.getElementById('saveStatus').textContent = '⚠ Opslaan mislukt';
+  }
+}
+
 function submitQuiz() {
+  const naam = document.getElementById('leerlingNaam').value.trim() || 'Onbekend';
   let total = 0;
   const sectionScores = sections.map(s => ({ label:s.label, color:s.color, score:0 }));
 
@@ -411,11 +472,12 @@ function submitQuiz() {
     const ring = document.getElementById('ringCircle');
     ring.style.transition = 'stroke-dashoffset 1s ease';
     ring.style.strokeDashoffset = 364.4 - pct * 364.4;
-    ring.style.stroke = pct >= 0.8 ? '#3fb950' : pct >= 0.5 ? '#58a6ff' : '#f78166';
+    ring.style.stroke = pct >= 0.8 ? '#1e8e3e' : pct >= 0.5 ? '#1a73e8' : '#d93025';
   }, 100);
 
+  document.getElementById('scoreNaam').textContent = naam;
   document.getElementById('scoreLabel').textContent =
-    pct === 1 ? '🎉 Perfect!' : pct >= 0.75 ? 'Goed gedaan!' : pct >= 0.5 ? 'Aardig op weg' : 'Nog even oefenen';
+    pct === 1 ? '🎉 Perfect, ' + naam + '!' : pct >= 0.75 ? 'Goed gedaan, ' + naam + '!' : pct >= 0.5 ? 'Aardig op weg, ' + naam : 'Nog even oefenen, ' + naam;
   document.getElementById('scoreSub').textContent =
     'Je had ' + total + ' van de 12 vragen goed (' + Math.round(pct * 100) + '%)';
   document.getElementById('breakdown').innerHTML = sectionScores.map(s =>
@@ -423,6 +485,7 @@ function submitQuiz() {
     '<div class="score-frac" style="color:' + s.color + '">' + s.score + '/3</div></div>'
   ).join('');
 
+  slaOpInJsonBin(naam, total, 12, Math.round(pct * 100));
   box.scrollIntoView({ behavior: 'smooth' });
 }
 
@@ -441,6 +504,7 @@ function retryQuiz() {
   document.getElementById('progressFill').style.width = '0%';
   document.getElementById('submitArea').style.display = 'block';
   document.getElementById('scoreBox').style.display = 'none';
+  document.getElementById('saveStatus').textContent = '';
   const ring = document.getElementById('ringCircle');
   ring.style.transition = 'none';
   ring.style.strokeDashoffset = '364.4';
