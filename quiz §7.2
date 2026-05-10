@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz: Sterke en zwakke basen | 4 havo</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f0f4f8;
+      color: #1a1a2e;
+      min-height: 100vh;
+    }
+    header {
+      background: linear-gradient(135deg, #1a3a5c, #2e75b6);
+      color: white;
+      padding: 24px 32px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    header svg { flex-shrink: 0; }
+    header h1 { font-size: 1.4rem; font-weight: 700; margin-bottom: 4px; }
+    header p { font-size: 0.9rem; opacity: 0.85; }
+
+    .context-banner {
+      background: #fff8e1;
+      border-left: 4px solid #f9a825;
+      margin: 24px auto;
+      max-width: 760px;
+      padding: 14px 18px;
+      border-radius: 0 8px 8px 0;
+      font-size: 0.92rem;
+      line-height: 1.6;
+    }
+    .context-banner strong { color: #e65100; }
+
+    .name-section {
+      max-width: 760px;
+      margin: 0 auto 20px;
+      padding: 0 20px;
+    }
+    .name-section label { font-weight: 600; display: block; margin-bottom: 6px; }
+    .name-section input {
+      padding: 10px 14px;
+      border: 2px solid #2e75b6;
+      border-radius: 8px;
+      font-size: 1rem;
+      width: 100%;
+      max-width: 340px;
+    }
+
+    .quiz-container { max-width: 760px; margin: 0 auto; padding: 0 20px 40px; }
+
+    .question-card {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 18px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      border-top: 4px solid #2e75b6;
+    }
+    .question-card.correct-card { border-top-color: #2e7d32; }
+    .question-card.wrong-card { border-top-color: #c62828; }
+
+    .q-number {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #2e75b6;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+    .q-text { font-size: 1rem; line-height: 1.6; margin-bottom: 16px; font-weight: 500; }
+    .q-sub { font-size: 0.85rem; color: #555; margin-bottom: 12px; font-style: italic; }
+
+    .options { display: flex; flex-direction: column; gap: 8px; }
+    .option-btn {
+      background: #f5f8fc;
+      border: 2px solid #d0dce8;
+      border-radius: 8px;
+      padding: 10px 16px;
+      text-align: left;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.15s;
+      line-height: 1.5;
+    }
+    .option-btn:hover:not(:disabled) { background: #e3edf8; border-color: #2e75b6; }
+    .option-btn.selected { background: #2e75b6; color: white; border-color: #2e75b6; }
+    .option-btn.correct { background: #e8f5e9; border-color: #2e7d32; color: #1b5e20; font-weight: 600; }
+    .option-btn.wrong { background: #ffebee; border-color: #c62828; color: #7f0000; }
+    .option-btn:disabled { cursor: default; }
+
+    .feedback {
+      margin-top: 14px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      display: none;
+    }
+    .feedback.show { display: block; }
+    .feedback.correct { background: #e8f5e9; border-left: 4px solid #2e7d32; color: #1b5e20; }
+    .feedback.wrong { background: #ffebee; border-left: 4px solid #c62828; color: #7f0000; }
+
+    .submit-btn {
+      display: block;
+      margin: 28px auto 0;
+      background: linear-gradient(135deg, #1a3a5c, #2e75b6);
+      color: white;
+      border: none;
+      padding: 14px 48px;
+      border-radius: 30px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(46,117,182,0.4);
+      transition: transform 0.1s;
+    }
+    .submit-btn:hover { transform: translateY(-2px); }
+    .submit-btn:disabled { opacity: 0.5; cursor: default; transform: none; }
+
+    .results-panel {
+      display: none;
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      margin-top: 24px;
+      text-align: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+    .results-panel.show { display: block; }
+    .score-circle {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1a3a5c, #2e75b6);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      box-shadow: 0 4px 16px rgba(46,117,182,0.4);
+    }
+    .score-circle .score-num { font-size: 2rem; font-weight: 800; line-height: 1; }
+    .score-circle .score-label { font-size: 0.75rem; opacity: 0.85; }
+    .results-panel h2 { font-size: 1.3rem; color: #1a3a5c; margin-bottom: 10px; }
+    .results-panel p { color: #444; margin-bottom: 6px; font-size: 0.95rem; }
+
+    .save-status { margin-top: 14px; font-size: 0.85rem; color: #666; }
+
+    sub { font-size: 0.8em; }
+  </style>
+</head>
+<body>
+
+<header>
+  <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="18" y="4" width="12" height="14" rx="2" fill="rgba(255,255,255,0.3)" stroke="white" stroke-width="2"/>
+    <path d="M14 18 L8 40 Q8 44 12 44 H36 Q40 44 40 40 L34 18 Z" fill="rgba(255,255,255,0.15)" stroke="white" stroke-width="2"/>
+    <circle cx="20" cy="30" r="3" fill="white" opacity="0.6"/>
+    <circle cx="28" cy="36" r="2" fill="white" opacity="0.4"/>
+    <circle cx="24" cy="26" r="2" fill="white" opacity="0.5"/>
+  </svg>
+  <div>
+    <h1>Sterke en zwakke basen</h1>
+    <p>Formatieve quiz · 4 havo · Scheikunde</p>
+  </div>
+</header>
+
+<div class="context-banner" style="max-width:760px;margin:24px auto;">
+  <strong>🏥 Context: Maagzuurremmers</strong><br>
+  Als je last hebt van maagzuur, helpen maagzuurremmers. Sommige bevatten een <em>sterke base</em> (NaOH — gevaarlijk!), andere een <em>zwakke base</em> (Mg(OH)<sub>2</sub> of NaHCO<sub>3</sub>). In deze quiz ontdek je het verschil.
+</div>
+
+<div class="name-section">
+  <label for="naam">Jouw naam:</label>
+  <input type="text" id="naam" placeholder="Voornaam achternaam" autocomplete="name">
+</div>
+
+<div class="quiz-container" id="quiz"></div>
+
+<script>
+const JSONBIN_ID = "6a008d80adc21f119a7d1172";
+const JSONBIN_KEY = "$2a$10$MyGVM0ANs86vLveZMzFVX.WbFi8bK7nUBz5RNV20fv707j4LkmEZO";
+
+const vragen = [
+  {
+    tekst: "Maagzuurtabletten bevatten Mg(OH)₂. Dit is een zwakke base. Wat betekent dat voor de OH⁻-ionen in water?",
+    opties: [
+      "Mg(OH)₂ geeft alle OH⁻-ionen volledig af aan het water",
+      "Mg(OH)₂ ioniseert maar gedeeltelijk — slechts een klein deel geeft OH⁻ af",
+      "Mg(OH)₂ neemt OH⁻-ionen op uit het water",
+      "Mg(OH)₂ reageert helemaal niet met water"
+    ],
+    antwoord: 1,
+    uitleg: "Een zwakke base ioniseert onvolledig. Mg(OH)₂ is slecht oplosbaar en geeft slechts weinig OH⁻-ionen af — dat maakt het veilig in een maagzuurtablet. Een sterke base zoals NaOH zou alle OH⁻ volledig afgeven en gevaarlijk zijn."
+  },
+  {
+    tekst: "NaOH is een sterke base. Wat gebeurt er als NaOH oplost in water?",
+    opties: [
+      "NaOH ioniseert voor ongeveer 50%",
+      "NaOH ioniseert vrijwel volledig: NaOH → Na⁺ + OH⁻",
+      "NaOH vormt een neerslag met water",
+      "NaOH neemt H⁺-ionen op en vormt water"
+    ],
+    antwoord: 1,
+    uitleg: "Een sterke base ioniseert (bijna) volledig in water. NaOH geeft alle OH⁻-ionen af: NaOH → Na⁺ + OH⁻. Daardoor is de [OH⁻] hoog en de pH erg hoog — te gevaarlijk voor inname."
+  },
+  {
+    tekst: "NaHCO₃ (zuiveringszout) zit ook in sommige maagzuurremmers. NaHCO₃ reageert als een zwakke base met H⁺:\n\nHCO₃⁻ + H⁺ → H₂O + CO₂\n\nWaarom werkt HCO₃⁻ hier als base?",
+    opties: [
+      "Het geeft H⁺-ionen af aan het maagzuur",
+      "Het neemt H⁺-ionen op uit het maagzuur",
+      "Het geeft OH⁻-ionen af aan het maagzuur",
+      "Het neemt elektronen op uit het maagzuur"
+    ],
+    antwoord: 1,
+    uitleg: "Een base neemt H⁺-ionen op. HCO₃⁻ neemt hier het H⁺ op van het maagzuur (HCl) en vormt water en CO₂. Dat verklaart het boeren na zo'n tablet!"
+  },
+  {
+    tekst: "Een arts vergelijkt twee middelen:\n• Middel A bevat NaOH (0,01 mol/L) → pH = 12\n• Middel B bevat NH₃ (0,01 mol/L) → pH = 10,6\n\nWaarom heeft NH₃ bij dezelfde concentratie een lagere pH dan NaOH?",
+    opties: [
+      "NH₃ heeft een grotere molaire massa",
+      "NH₃ is een sterke base, NaOH een zwakke",
+      "NH₃ ioniseert maar gedeeltelijk, dus minder OH⁻ in oplossing",
+      "NaOH bevat twee OH⁻-ionen per formule-eenheid"
+    ],
+    antwoord: 2,
+    uitleg: "NH₃ is een zwakke base: NH₃ + H₂O ⇌ NH₄⁺ + OH⁻. Slechts een klein deel reageert, waardoor [OH⁻] lager is dan bij NaOH. Lager [OH⁻] = lagere pH. NaOH ioniseert volledig en geeft véél meer OH⁻."
+  },
+  {
+    tekst: "Een oplossing bevat 0,10 mol/L NaOH. NaOH is een sterke base. Wat is de [OH⁻] in deze oplossing?",
+    opties: [
+      "Minder dan 0,10 mol/L, want niet alles ioniseert",
+      "0,10 mol/L, want NaOH ioniseert volledig",
+      "0,20 mol/L, want NaOH heeft twee ionen",
+      "Kan niet worden bepaald zonder de pH"
+    ],
+    antwoord: 1,
+    uitleg: "NaOH is een sterke base en ioniseert volledig: NaOH → Na⁺ + OH⁻. Dus [OH⁻] = [NaOH] = 0,10 mol/L. Bij een zwakke base zoals NH₃ zou [OH⁻] lager zijn dan de beginconcentratie."
+  },
+  {
+    tekst: "Welke uitspraak over sterke en zwakke basen is JUIST?",
+    opties: [
+      "Een sterke base heeft altijd een hogere pH dan een zwakke base",
+      "Een zwakke base is altijd gevaarlijker dan een sterke base",
+      "Bij gelijke concentratie heeft een sterke base een hogere [OH⁻] dan een zwakke base",
+      "Zwakke basen kunnen geen zuren neutraliseren"
+    ],
+    antwoord: 2,
+    uitleg: "Bij gelijke concentratie ioniseert een sterke base volledig, een zwakke slechts gedeeltelijk. Dus [OH⁻] en pH zijn hoger bij de sterke base. Sterke bases zijn gevaarlijker — niet zwakke! En zwakke basen kunnen zeker zuren neutraliseren (denk aan maagzuurtabletten)."
+  },
+  {
+    tekst: "Ca(OH)₂ (kalkwater) is een sterke base, maar heeft bij lage concentratie een relatief lage pH. Wat is de beste verklaring?",
+    opties: [
+      "Ca(OH)₂ is eigenlijk een zwakke base",
+      "Ca(OH)₂ ioniseert volledig maar lost slecht op, dus de concentratie OH⁻ is laag",
+      "Ca(OH)₂ reageert niet met water",
+      "Ca(OH)₂ heeft maar één OH⁻ per formule-eenheid"
+    ],
+    antwoord: 1,
+    uitleg: "Ca(OH)₂ is een sterke base (ioniseert volledig: Ca(OH)₂ → Ca²⁺ + 2 OH⁻), maar het lost slecht op in water. Daardoor is de maximale [OH⁻] laag, en dus ook de pH. Sterk ≠ hoge concentratie. Dit is een veel voorkomende verwarring!"
+  },
+  {
+    tekst: "In een maagzuurtablet zit Mg(OH)₂ als werkzame stof. Stel dat de fabrikant NaOH zou gebruiken in dezelfde hoeveelheid. Wat zou het gevolg zijn?",
+    opties: [
+      "Het tablet zou minder goed werken",
+      "Er zou geen verschil zijn — beide zijn basen",
+      "De [OH⁻] zou veel hoger zijn en het tablet gevaarlijk bijtend",
+      "De reactie met HCl zou trager verlopen"
+    ],
+    antwoord: 2,
+    uitleg: "NaOH is een sterke base en geeft bij gelijke molaire hoeveelheid veel meer OH⁻ dan Mg(OH)₂. Dat levert een hoge pH en bijtend effect op het maagslijmvlies. Mg(OH)₂ werkt juist omdat het mild is: zwakke base, gecontroleerde OH⁻-afgifte."
+  }
+];
+
+let antwoorden = new Array(vragen.length).fill(null);
+let ingediend = false;
+
+function buildQuiz() {
+  const container = document.getElementById('quiz');
+  vragen.forEach((v, i) => {
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.id = `card-${i}`;
+
+    const tekst = v.tekst.replace(/\n/g, '<br>').replace(/₂/g,'<sub>2</sub>').replace(/₃/g,'<sub>3</sub>').replace(/⁻/g,'<sup>-</sup>').replace(/⁺/g,'<sup>+</sup>').replace(/²⁺/g,'<sup>2+</sup>');
+
+    card.innerHTML = `
+      <div class="q-number">Vraag ${i+1} van ${vragen.length}</div>
+      <div class="q-text">${tekst}</div>
+      <div class="options" id="opts-${i}"></div>
+      <div class="feedback" id="feedback-${i}"></div>
+    `;
+
+    const optsDiv = card.querySelector(`#opts-${i}`);
+    v.opties.forEach((opt, j) => {
+      const btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.innerHTML = opt.replace(/₂/g,'<sub>2</sub>').replace(/₃/g,'<sub>3</sub>').replace(/⁻/g,'<sup>-</sup>').replace(/⁺/g,'<sup>+</sup>').replace(/²⁺/g,'<sup>2+</sup>');
+      btn.addEventListener('click', () => selectAnswer(i, j));
+      optsDiv.appendChild(btn);
+    });
+
+    container.appendChild(card);
+  });
+
+  const btn = document.createElement('button');
+  btn.className = 'submit-btn';
+  btn.id = 'submit-btn';
+  btn.textContent = 'Bekijk resultaten';
+  btn.addEventListener('click', submitQuiz);
+  container.appendChild(btn);
+
+  const results = document.createElement('div');
+  results.className = 'results-panel';
+  results.id = 'results';
+  container.appendChild(results);
+}
+
+function selectAnswer(vraagIdx, optieIdx) {
+  if (ingediend) return;
+  antwoorden[vraagIdx] = optieIdx;
+  const btns = document.querySelectorAll(`#opts-${vraagIdx} .option-btn`);
+  btns.forEach((b, j) => {
+    b.classList.toggle('selected', j === optieIdx);
+  });
+}
+
+function submitQuiz() {
+  if (ingediend) return;
+  ingediend = true;
+  document.getElementById('submit-btn').disabled = true;
+
+  let score = 0;
+  vragen.forEach((v, i) => {
+    const btns = document.querySelectorAll(`#opts-${i} .option-btn`);
+    const feedback = document.getElementById(`feedback-${i}`);
+    const card = document.getElementById(`card-${i}`);
+    const gekozen = antwoorden[i];
+
+    btns.forEach(b => b.disabled = true);
+
+    if (gekozen === null) {
+      feedback.textContent = 'Je hebt geen antwoord gegeven.';
+      feedback.className = 'feedback show wrong';
+      card.classList.add('wrong-card');
+    } else if (gekozen === v.antwoord) {
+      score++;
+      btns[gekozen].classList.add('correct');
+      btns[gekozen].classList.remove('selected');
+      feedback.innerHTML = `✅ <strong>Goed!</strong> ${v.uitleg}`;
+      feedback.className = 'feedback show correct';
+      card.classList.add('correct-card');
+    } else {
+      btns[gekozen].classList.add('wrong');
+      btns[gekozen].classList.remove('selected');
+      btns[v.antwoord].classList.add('correct');
+      feedback.innerHTML = `❌ <strong>Niet helemaal.</strong> ${v.uitleg}`;
+      feedback.className = 'feedback show wrong';
+      card.classList.add('wrong-card');
+    }
+  });
+
+  showResults(score);
+  saveToJSONbin(score);
+}
+
+function showResults(score) {
+  const pct = Math.round((score / vragen.length) * 100);
+  let boodschap = '';
+  if (pct >= 85) boodschap = '🏆 Uitstekend! Je snapt het verschil goed.';
+  else if (pct >= 60) boodschap = '👍 Goed bezig! Kijk de feedback bij de fouten na.';
+  else boodschap = '📚 Herhaal de uitleg over sterke en zwakke basen.';
+
+  const panel = document.getElementById('results');
+  panel.innerHTML = `
+    <div class="score-circle">
+      <span class="score-num">${score}/${vragen.length}</span>
+      <span class="score-label">${pct}%</span>
+    </div>
+    <h2>Resultaat</h2>
+    <p>${boodschap}</p>
+    <p style="margin-top:12px;font-size:0.85rem;color:#888;">Scroll omhoog om de feedback per vraag te lezen.</p>
+    <div class="save-status" id="save-status">Resultaat opslaan...</div>
+  `;
+  panel.classList.add('show');
+  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+async function saveToJSONbin(score) {
+  const statusEl = document.getElementById('save-status');
+  const naam = document.getElementById('naam').value.trim() || 'Anoniem';
+  const entry = {
+    naam,
+    score,
+    totaal: vragen.length,
+    percentage: Math.round((score / vragen.length) * 100),
+    quiz: "4havo-basen-sterkzwak",
+    tijdstip: new Date().toISOString()
+  };
+
+  try {
+    const getRes = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}/latest`, {
+      headers: { 'X-Master-Key': JSONBIN_KEY }
+    });
+    const getData = await getRes.json();
+    const bestaand = getData.record?.scores || [];
+    bestaand.push(entry);
+
+    await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_KEY },
+      body: JSON.stringify({ scores: bestaand })
+    });
+    if (statusEl) statusEl.textContent = '✅ Resultaat opgeslagen.';
+  } catch (e) {
+    if (statusEl) statusEl.textContent = '(Opslaan niet gelukt — resultaat alleen zichtbaar hier.)';
+  }
+}
+
+buildQuiz();
+</script>
+</body>
+</html>
