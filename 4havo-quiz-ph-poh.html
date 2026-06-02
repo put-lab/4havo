@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>pH en pOH — 4 havo Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --acid: #e63946;
+    --neutral: #2ec4b6;
+    --base: #457b9d;
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #21262d;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #7d8590;
+    --correct: #3fb950;
+    --wrong: #f85149;
+    --yellow: #f0a500;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2rem 1rem;
+  }
+
+  /* pH gradient strip at top */
+  .ph-strip {
+    height: 6px;
+    background: linear-gradient(to right,
+      #e63946 0%, #ff6b35 14%, #f0a500 28%,
+      #f9d423 42%, #2ec4b6 50%,
+      #457b9d 64%, #1d3557 78%, #6a0dad 100%);
+    border-radius: 3px;
+    margin-bottom: 2.5rem;
+    position: relative;
+  }
+
+  .ph-strip::after {
+    content: 'pH 0 ← zuur | neutraal | basisch → pH 14';
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  header .tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--neutral);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    background: rgba(46,196,182,0.1);
+    border: 1px solid rgba(46,196,182,0.3);
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    margin-bottom: 0.75rem;
+  }
+
+  h1 {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(1.5rem, 4vw, 2.2rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+  }
+
+  h1 span { color: var(--neutral); }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  /* Formule kaart */
+  .formula-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin: 0 auto 2rem;
+    max-width: 680px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+  }
+
+  .formula-item {
+    text-align: center;
+  }
+
+  .formula-item .label {
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.4rem;
+  }
+
+  .formula-item .eq {
+    font-family: 'Space Mono', monospace;
+    font-size: 1rem;
+    color: var(--yellow);
+  }
+
+  /* Progress */
+  .progress-bar-wrap {
+    max-width: 680px;
+    margin: 0 auto 2rem;
+  }
+
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .progress-bar {
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(to right, var(--neutral), var(--base));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  /* Quiz container */
+  .quiz-wrap {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  .question-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    animation: slideIn 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .question-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(to right, var(--neutral), var(--base));
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .q-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+  }
+
+  .q-number {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .q-badge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    font-family: 'Space Mono', monospace;
+    text-transform: uppercase;
+  }
+
+  .badge-basis { background: rgba(69,123,157,0.2); color: var(--base); border: 1px solid rgba(69,123,157,0.4); }
+  .badge-berekening { background: rgba(240,165,0,0.15); color: var(--yellow); border: 1px solid rgba(240,165,0,0.3); }
+  .badge-redeneren { background: rgba(46,196,182,0.15); color: var(--neutral); border: 1px solid rgba(46,196,182,0.3); }
+
+  .question-text {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+  }
+
+  .question-text .given {
+    font-family: 'Space Mono', monospace;
+    color: var(--yellow);
+    font-size: 1rem;
+  }
+
+  /* Input type question */
+  .input-group {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .answer-input {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.65rem 1rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 1rem;
+    color: var(--text);
+    width: 160px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .answer-input:focus { border-color: var(--neutral); }
+  .answer-input.correct { border-color: var(--correct); background: rgba(63,185,80,0.08); }
+  .answer-input.wrong { border-color: var(--wrong); background: rgba(248,81,73,0.08); }
+
+  .input-unit {
+    font-family: 'Space Mono', monospace;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  /* MC options */
+  .options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .option-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+  }
+
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--neutral);
+    background: rgba(46,196,182,0.07);
+  }
+
+  .option-btn.selected { border-color: var(--neutral); background: rgba(46,196,182,0.1); }
+  .option-btn.correct { border-color: var(--correct) !important; background: rgba(63,185,80,0.12) !important; color: var(--correct); font-weight: 600; }
+  .option-btn.wrong { border-color: var(--wrong) !important; background: rgba(248,81,73,0.1) !important; color: var(--wrong); }
+  .option-btn:disabled { cursor: default; }
+
+  /* Feedback */
+  .feedback {
+    margin-top: 1.25rem;
+    padding: 1rem 1.25rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    display: none;
+  }
+
+  .feedback.show { display: block; animation: fadeIn 0.25s ease; }
+  .feedback.correct-fb { background: rgba(63,185,80,0.1); border: 1px solid rgba(63,185,80,0.3); }
+  .feedback.wrong-fb { background: rgba(248,81,73,0.08); border: 1px solid rgba(248,81,73,0.25); }
+
+  .feedback-title {
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .correct-fb .feedback-title { color: var(--correct); }
+  .wrong-fb .feedback-title { color: var(--wrong); }
+
+  .step-solution {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 0.5rem;
+    line-height: 1.8;
+  }
+
+  /* Buttons */
+  .btn-check {
+    margin-top: 1.25rem;
+    background: var(--neutral);
+    color: #0d1117;
+    border: none;
+    padding: 0.7rem 1.5rem;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+
+  .btn-check:hover { opacity: 0.85; }
+  .btn-check:disabled { opacity: 0.4; cursor: default; }
+
+  /* Score screen */
+  .score-screen {
+    display: none;
+    text-align: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 3rem 2rem;
+    animation: slideIn 0.4s ease;
+  }
+
+  .score-screen.show { display: block; }
+
+  .score-number {
+    font-family: 'Space Mono', monospace;
+    font-size: 4rem;
+    font-weight: 700;
+    color: var(--neutral);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .score-label {
+    color: var(--muted);
+    margin-bottom: 2rem;
+  }
+
+  .score-bar-wrap {
+    background: var(--surface2);
+    border-radius: 8px;
+    height: 12px;
+    margin: 1.5rem auto;
+    max-width: 300px;
+    overflow: hidden;
+  }
+
+  .score-bar-fill {
+    height: 100%;
+    border-radius: 8px;
+    background: linear-gradient(to right, var(--neutral), var(--base));
+    transition: width 1s ease 0.3s;
+  }
+
+  .score-msg {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+    color: var(--text);
+  }
+
+  .btn-retry {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: border-color 0.15s;
+  }
+
+  .btn-retry:hover { border-color: var(--neutral); }
+
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  @media (max-width: 480px) {
+    .question-card { padding: 1.5rem; }
+    .formula-card { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="ph-strip"></div>
+
+<header>
+  <div class="tag">4 havo · scheikunde</div>
+  <h1>pH en <span>pOH</span> berekeningen</h1>
+  <p class="subtitle">Oefen met berekeningen en begrip rond pH, pOH en [H⁺]/[OH⁻]</p>
+</header>
+
+<div class="formula-card">
+  <div class="formula-item">
+    <div class="label">definitie pH</div>
+    <div class="eq">pH = −log[H⁺]</div>
+  </div>
+  <div class="formula-item">
+    <div class="label">definitie pOH</div>
+    <div class="eq">pOH = −log[OH⁻]</div>
+  </div>
+  <div class="formula-item">
+    <div class="label">relatie</div>
+    <div class="eq">pH + pOH = 14</div>
+  </div>
+  <div class="formula-item">
+    <div class="label">neutraal</div>
+    <div class="eq">pH = 7 (25 °C)</div>
+  </div>
+</div>
+
+<div class="progress-bar-wrap">
+  <div class="progress-meta">
+    <span id="prog-text">Vraag 1 van 10</span>
+    <span id="score-live">Score: 0</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="prog-fill"></div></div>
+</div>
+
+<div class="quiz-wrap" id="quiz-wrap">
+  <!-- Questions rendered here -->
+</div>
+
+<div class="score-screen" id="score-screen">
+  <div class="score-number" id="final-score">0/10</div>
+  <div class="score-label">vragen goed</div>
+  <div class="score-bar-wrap">
+    <div class="score-bar-fill" id="score-bar" style="width:0%"></div>
+  </div>
+  <p class="score-msg" id="score-msg"></p>
+  <button class="btn-retry" onclick="restartQuiz()">↺ Opnieuw proberen</button>
+</div>
+
+<script>
+// Significantie bij pH/pOH:
+// - [H⁺] of [OH⁻] gegeven met N significante cijfers → pH/pOH afronden op N decimalen
+// - pH gegeven met N decimalen → [H⁺] met N significante cijfers (MC-vraag, geen invulvraag)
+// - pH + pOH = 14: het getal met de minste decimalen bepaalt de afronding
+
+const questions = [
+  {
+    id: 1,
+    type: 'input',
+    badge: 'basis',
+    // 10⁻³ = 1 sig. fig. → pH op 0 decimalen → pH = 3
+    text: 'Een oplossing heeft <span class="given">[H⁺] = 10⁻³ mol/L</span>.<br>Bereken de pH. Geef het antwoord met het juiste aantal decimalen.',
+    answer: 3,
+    requiredDecimals: 0,
+    unit: '',
+    hint: 'pH = −log(10⁻³) = 3. [H⁺] heeft 1 significante cijfer → pH op 0 decimalen.',
+    steps: ['pH = −log[H⁺]', 'pH = −log(10⁻³) = 3', '10⁻³ heeft 1 sig.fig. → 0 decimalen → pH = 3']
+  },
+  {
+    id: 2,
+    type: 'input',
+    badge: 'basis',
+    // [H⁺] = 2,5 × 10⁻⁴ → 2 sig.fig. → pH op 2 decimalen → pH = 3,60
+    text: 'Een oplossing heeft <span class="given">[H⁺] = 2,5 × 10⁻⁴ mol/L</span>.<br>Bereken de pH. Geef het antwoord met het juiste aantal decimalen.',
+    answer: 3.60,
+    requiredDecimals: 2,
+    unit: '',
+    hint: 'pH = −log(2,5 × 10⁻⁴). 2,5 heeft 2 significante cijfers → pH op 2 decimalen.',
+    steps: ['pH = −log(2,5 × 10⁻⁴)', 'pH = −(log 2,5 + log 10⁻⁴)', 'pH = −(0,398 − 4) = 3,60', '2 significante cijfers → 2 decimalen → pH = 3,60']
+  },
+  {
+    id: 3,
+    type: 'mc',
+    badge: 'basis',
+    // pH = 5 (0 decimalen) → [H⁺] met 1 sig.fig. → 10⁻⁵
+    text: 'Een oplossing heeft <span class="given">pH = 5</span>. Wat is [H⁺]?<br><small style="color:var(--muted)">pH heeft 0 decimalen → antwoord met 1 significante cijfer.</small>',
+    options: ['10⁻⁵ mol/L', '5,0 × 10⁻⁵ mol/L', '5 mol/L', '1,00 × 10⁻⁵ mol/L'],
+    answer: 0,
+    feedback: 'pH = 5 heeft 0 decimalen → [H⁺] met 1 significante cijfer → 10⁻⁵ mol/L. (Niet 1,00 × 10⁻⁵, want dat impliceert 3 sig. fig.)',
+    steps: ['[H⁺] = 10^(−pH) = 10^(−5)', 'pH heeft 0 decimalen → 1 sig. fig.', '→ schrijf als 10⁻⁵ mol/L']
+  },
+  {
+    id: 4,
+    type: 'input',
+    badge: 'berekening',
+    // [OH⁻] = 10⁻² → 1 sig.fig. → pOH op 0 decimalen → pOH = 2
+    text: 'Een loogoplossing heeft <span class="given">[OH⁻] = 10⁻² mol/L</span>.<br>Bereken de pOH.',
+    answer: 2,
+    requiredDecimals: 0,
+    unit: '',
+    hint: 'pOH = −log[OH⁻]. 10⁻² heeft 1 sig. fig. → 0 decimalen.',
+    steps: ['pOH = −log(10⁻²) = 2', '10⁻² heeft 1 sig. fig. → pOH op 0 decimalen → pOH = 2']
+  },
+  {
+    id: 5,
+    type: 'input',
+    badge: 'berekening',
+    // pOH = 4 (0 decimalen) → pH = 14 − 4 = 10, ook 0 decimalen
+    text: 'Een oplossing heeft <span class="given">pOH = 4</span>.<br>Bereken de pH.',
+    answer: 10,
+    requiredDecimals: 0,
+    unit: '',
+    hint: 'pH = 14 − pOH. pOH heeft 0 decimalen → pH ook op 0 decimalen.',
+    steps: ['pH + pOH = 14', 'pH = 14 − 4 = 10', 'pOH = 4 heeft 0 decimalen → pH = 10 (0 decimalen)']
+  },
+  {
+    id: 6,
+    type: 'input',
+    badge: 'berekening',
+    // [OH⁻] = 4,0 × 10⁻³ → 2 sig.fig. → pOH op 2 dec → pOH = 2,40 → pH = 14 − 2,40 = 11,60
+    text: 'Een basische oplossing heeft <span class="given">[OH⁻] = 4,0 × 10⁻³ mol/L</span>.<br>Bereken de pH.',
+    answer: 11.60,
+    requiredDecimals: 2,
+    unit: '',
+    hint: 'Stap 1: pOH = −log(4,0 × 10⁻³). Stap 2: pH = 14 − pOH. 4,0 heeft 2 sig.fig. → 2 decimalen.',
+    steps: ['pOH = −log(4,0 × 10⁻³)', 'pOH = −(log 4,0 + log 10⁻³) = −(0,602 − 3) = 2,40', 'pH = 14 − 2,40 = 11,60', '4,0 heeft 2 sig. fig. → 2 decimalen → pH = 11,60']
+  },
+  {
+    id: 7,
+    type: 'input',
+    badge: 'berekening',
+    // pH = 2 (0 decimalen) → pOH = 12 (0 decimalen)
+    text: 'Een zuuroplossing heeft <span class="given">pH = 2</span>.<br>Wat is de pOH?',
+    answer: 12,
+    requiredDecimals: 0,
+    unit: '',
+    hint: 'pOH = 14 − pH. pH heeft 0 decimalen → pOH ook 0 decimalen.',
+    steps: ['pOH = 14 − 2 = 12', 'pH = 2 heeft 0 decimalen → pOH = 12 (0 decimalen)']
+  },
+  {
+    id: 8,
+    type: 'input',
+    badge: 'berekening',
+    // [H⁺] = 3,00 × 10⁻² → 3 sig.fig. → pH op 3 dec → pH = 1,523
+    text: 'Een oplossing heeft <span class="given">[H⁺] = 3,00 × 10⁻² mol/L</span>.<br>Bereken de pH.',
+    answer: 1.523,
+    requiredDecimals: 3,
+    unit: '',
+    hint: '3,00 heeft 3 significante cijfers → pH op 3 decimalen.',
+    steps: ['pH = −log(3,00 × 10⁻²)', 'pH = −(log 3,00 + log 10⁻²)', 'pH = −(0,477 − 2) = 1,523', '3 sig. fig. → 3 decimalen → pH = 1,523']
+  },
+  {
+    id: 9,
+    type: 'mc',
+    badge: 'redeneren',
+    text: 'Een oplossing heeft pH = 9. Hoe classificeer je deze oplossing?',
+    options: ['Zuur', 'Neutraal', 'Basisch', 'Kan niet bepalen'],
+    answer: 2,
+    feedback: 'pH > 7 → basisch. pH < 7 → zuur. pH = 7 → neutraal.',
+    steps: ['pH = 9 > 7', '→ basisch']
+  },
+  {
+    id: 10,
+    type: 'mc',
+    badge: 'redeneren',
+    text: 'Een oplossing heeft pOH = 3. Wat geldt voor deze oplossing?',
+    options: ['Zuur, pH = 11', 'Basisch, pH = 11', 'Zuur, pH = 3', 'Neutraal, pH = 7'],
+    answer: 1,
+    feedback: 'pOH = 3 → pH = 14 − 3 = 11 → pH > 7 → basisch.',
+    steps: ['pH = 14 − pOH = 14 − 3 = 11', 'pH = 11 > 7 → basisch']
+  }
+];
+
+let current = 0;
+let score = 0;
+let answered = [];
+
+function badgeClass(b) {
+  if (b === 'basis') return 'badge-basis';
+  if (b === 'berekening') return 'badge-berekening';
+  return 'badge-redeneren';
+}
+
+function renderQuestion(q) {
+  const wrap = document.getElementById('quiz-wrap');
+  wrap.innerHTML = '';
+
+  const card = document.createElement('div');
+  card.className = 'question-card';
+
+  card.innerHTML = `
+    <div class="q-meta">
+      <span class="q-number">Vraag ${current + 1} van ${questions.length}</span>
+      <span class="q-badge ${badgeClass(q.badge)}">${q.badge}</span>
+    </div>
+    <div class="question-text">${q.text}</div>
+    ${q.type === 'input' ? renderInput(q) : renderMC(q)}
+    <div class="feedback" id="feedback-${q.id}"></div>
+  `;
+
+  wrap.appendChild(card);
+
+  if (q.type === 'input') {
+    const inp = document.getElementById('inp-' + q.id);
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') checkInput(q); });
+    inp.focus();
+  }
+
+  updateProgress();
+}
+
+function renderInput(q) {
+  return `
+    <div class="input-group">
+      <input class="answer-input" id="inp-${q.id}" type="number" step="any" placeholder="jouw antwoord" autocomplete="off">
+      ${q.unit ? `<span class="input-unit">${q.unit}</span>` : ''}
+    </div>
+    <button class="btn-check" id="btn-${q.id}" onclick="checkInput(questions[current])">Controleer</button>
+  `;
+}
+
+function renderMC(q) {
+  return `
+    <div class="options-grid" id="opts-${q.id}">
+      ${q.options.map((opt, i) => `
+        <button class="option-btn" id="opt-${q.id}-${i}" onclick="checkMC(questions[current], ${i})">${opt}</button>
+      `).join('')}
+    </div>
+  `;
+}
+
+function showFeedback(q, isCorrect) {
+  // Used for MC questions only
+  const fb = document.getElementById('feedback-' + q.id);
+  const stepsHtml = q.steps ? q.steps.map(s => `<div>${s}</div>`).join('') : '';
+  fb.className = 'feedback show ' + (isCorrect ? 'correct-fb' : 'wrong-fb');
+
+  const nextBtn = `<button class="btn-check" style="margin-top:1rem;${isCorrect ? '' : 'background:var(--surface2);border:1px solid var(--border);color:var(--text);'}" onclick="advanceQuestion()">Volgende vraag →</button>`;
+
+  fb.innerHTML = `
+    <div class="feedback-title">${isCorrect ? '✓ Correct!' : '✗ Niet helemaal'}</div>
+    <div>${isCorrect
+      ? (q.feedback || 'Goed!')
+      : (q.feedback || `Het juiste antwoord is: ${q.options[q.answer]}`)
+    }</div>
+    ${stepsHtml ? `<div class="step-solution">${stepsHtml}</div>` : ''}
+    ${nextBtn}
+  `;
+}
+
+function countDecimals(str) {
+  const s = str.replace(',', '.');
+  const dot = s.indexOf('.');
+  if (dot === -1) return 0;
+  return s.length - dot - 1;
+}
+
+function checkInput(q) {
+  const inp = document.getElementById('inp-' + q.id);
+  const btn = document.getElementById('btn-' + q.id);
+  const rawStr = inp.value.trim();
+  const val = parseFloat(rawStr.replace(',', '.'));
+  if (isNaN(val)) return;
+
+  const req = q.requiredDecimals !== undefined ? q.requiredDecimals : 0;
+  const typed = countDecimals(rawStr);
+  const numCorrect = Math.abs(val - q.answer) < (0.5 * Math.pow(10, -req) + 1e-9);
+  const decCorrect = typed === req;
+
+  let status;
+  if (numCorrect && decCorrect) status = 'correct';
+  else if (numCorrect && !decCorrect) status = 'wrong_dec';
+  else status = 'wrong';
+
+  const isCorrect = status === 'correct';
+  inp.classList.add(isCorrect ? 'correct' : 'wrong');
+
+  if (isCorrect) {
+    inp.disabled = true;
+    btn.disabled = true;
+    // Only count score on first correct attempt
+    if (!q._attempted) score++;
+    q._attempted = true;
+    updateProgress();
+  } else {
+    // Mark as attempted (wrong), but keep open for retry
+    if (!q._attempted) {
+      q._attempted = true;
+      q._firstWrong = true;
+    }
+    updateProgress();
+  }
+
+  showFeedbackInput(q, status);
+}
+
+function showFeedbackInput(q, status) {
+  const fb = document.getElementById('feedback-' + q.id);
+  const stepsHtml = q.steps ? q.steps.map(s => `<div>${s}</div>`).join('') : '';
+  const req = q.requiredDecimals !== undefined ? q.requiredDecimals : 0;
+  const answerStr = q.answer.toFixed(req);
+
+  let title, body, cls, showNext, showRetry;
+
+  if (status === 'correct') {
+    cls = 'correct-fb'; title = '✓ Correct!';
+    body = 'Goed gedaan — juist antwoord én juiste significantie.';
+    showNext = true; showRetry = false;
+  } else if (status === 'wrong_dec') {
+    cls = 'wrong-fb'; title = '✗ Getal klopt, maar afronding niet';
+    body = `Het antwoord moet <strong>${answerStr}</strong> zijn — ${req} decimaal${req !== 1 ? 'en' : ''}, want het gegeven heeft ${req} significante cijfer${req !== 1 ? 's' : ''}.`;
+    showNext = false; showRetry = true;
+  } else {
+    cls = 'wrong-fb'; title = '✗ Niet correct';
+    body = `Hint: ${q.hint || ''}`;
+    showNext = false; showRetry = true;
+  }
+
+  fb.className = 'feedback show ' + cls;
+  fb.innerHTML = `
+    <div class="feedback-title">${title}</div>
+    <div>${body}</div>
+    ${stepsHtml ? `<div class="step-solution">${stepsHtml}</div>` : ''}
+  `;
+
+  const btn = document.getElementById('btn-' + q.id);
+  const inp = document.getElementById('inp-' + q.id);
+
+  if (showNext) {
+    btn.textContent = 'Volgende vraag →';
+    btn.disabled = false;
+    btn.onclick = () => advanceQuestion();
+    btn.style.background = 'var(--correct)';
+  } else if (showRetry) {
+    // Re-enable input for retry
+    inp.disabled = false;
+    inp.classList.remove('wrong');
+    inp.value = '';
+    inp.focus();
+    btn.textContent = 'Controleer';
+    btn.disabled = false;
+    btn.style.background = '';
+    btn.onclick = () => checkInput(q);
+  }
+}
+
+function advanceQuestion() {
+  if (current < questions.length - 1) { current++; renderQuestion(questions[current]); }
+  else { showScore(); }
+}
+
+function checkMC(q, idx) {
+  const allBtns = q.options.map((_, i) => document.getElementById('opt-' + q.id + '-' + i));
+  allBtns.forEach(b => b.disabled = true);
+
+  const isCorrect = idx === q.answer;
+  allBtns[idx].classList.add(isCorrect ? 'correct' : 'wrong');
+  if (!isCorrect) allBtns[q.answer].classList.add('correct');
+
+  if (isCorrect) score++;
+  answered.push(isCorrect);
+  updateProgress();
+  showFeedback(q, isCorrect);
+}
+
+function updateProgress() {
+  const pct = (current / questions.length) * 100;
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-text').textContent = `Vraag ${Math.min(current + 1, questions.length)} van ${questions.length}`;
+  document.getElementById('score-live').textContent = `Score: ${score}`;
+}
+
+function showScore() {
+  document.getElementById('quiz-wrap').style.display = 'none';
+  document.getElementById('prog-fill').style.width = '100%';
+  const screen = document.getElementById('score-screen');
+  screen.classList.add('show');
+  document.getElementById('final-score').textContent = `${score}/${questions.length}`;
+
+  const pct = (score / questions.length) * 100;
+  setTimeout(() => {
+    document.getElementById('score-bar').style.width = pct + '%';
+  }, 100);
+
+  let msg = '';
+  if (pct === 100) msg = '🏆 Perfecte score! Je beheerst pH en pOH volledig.';
+  else if (pct >= 75) msg = '💪 Goed gedaan! Bijna alles goed — bekijk de stappen van de gemiste vragen.';
+  else if (pct >= 50) msg = '📚 Aardig op weg. Oefen nog even de relatie pH + pOH = 14.';
+  else msg = '🔄 Bestudeer de formules opnieuw en probeer het daarna nog een keer.';
+
+  document.getElementById('score-msg').textContent = msg;
+}
+
+function restartQuiz() {
+  current = 0;
+  score = 0;
+  answered = [];
+  document.getElementById('quiz-wrap').style.display = 'block';
+  document.getElementById('score-screen').classList.remove('show');
+  renderQuestion(questions[current]);
+}
+
+// Init
+renderQuestion(questions[current]);
+</script>
+</body>
+</html>
